@@ -4,44 +4,333 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.messenger53_1.ui.theme.Messenger531Theme
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
+import androidx.compose.ui.text.font.FontWeight.Companion.W700
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.messenger53_1.ui.theme.bgGrey
+import com.example.messenger53_1.ui.theme.bgGreyDark
+import com.example.messenger53_1.ui.theme.brGrey
+import com.example.messenger53_1.ui.theme.txtMainSelected
+import com.example.messenger53_1.ui.theme.txtMainWhite
 
+//Создание страницы "Профиль"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Messenger531Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Мир разработки мобильных приложений",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            Scaffold(
+                content = { innerPadding: PaddingValues -> //системный отступ для верхнего бара
+                    //Создание колонки построения всех элементов
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                            .background(
+                                color = bgGrey
+                            ),
+
+                        ) {
+
+                        HeaderProfile()
+
+                        InfoProfile()
+
+                        MenuApplication()
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.BottomStart
+                        ) {
+                            NavBarApp()
+                        }
+
+                    }
                 }
+            )
+        }
+
+
+    }
+
+}
+
+
+@Composable
+fun HeaderProfile() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = bgGreyDark
+            )
+            .height(175.dp)
+
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.profile_notification),
+                    contentDescription = ""
+                )
+                Image(
+                    painter = painterResource(R.drawable.avatar_cat),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .shadow(3.dp, CircleShape)
+                        .clip(CircleShape)
+                        .clickable(
+                            onClick = {},
+                            indication = ripple(),
+                            interactionSource = remember { MutableInteractionSource() }
+                        ),
+
+                    )
+                Spacer(
+                    modifier = Modifier.size(15.dp)
+                )
+                Text(
+                    text = "Котов Кот Котович",
+                    color = txtMainWhite,
+                    fontSize = 20.sp
+                )
             }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            Image(
+                painter = painterResource(R.drawable.exit_profile),
+                contentDescription = "",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(30.dp)
+                    .clickable(
+                        onClick = {},
+                        indication = ripple(),
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
+            )
+        }
+
+
+    }
+
+}
+
+@Composable
+fun InfoProfile() {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 15.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+
+        ) {
+            Text(
+                text = "Аккаунт",
+                color = txtMainWhite,
+                fontSize = 20.sp,
+                fontWeight = W700
+            )
+
+            Image(
+                painter = painterResource(R.drawable.edit),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable(
+                        onClick = {},
+                        indication = ripple(),
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
+            )
+
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(2.dp, color = brGrey)
+                .background(
+                    color = bgGreyDark
+                )
+                .padding(vertical = 10.dp)
+        ) {
+            ProfileRowAccounts(txtHeader = "Номер телефона", txtData = "+7(999)999-99-99")
+            ProfileRowAccounts(txtHeader = "Имя пользователя", txtData = "@Koterinio")
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun ProfileRowAccounts(txtHeader: String, txtData: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 25.dp, vertical = 5.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = txtHeader,
+            color = txtMainWhite,
+            fontSize = 16.sp,
+        )
+        Text(
+            text = txtData,
+            color = txtMainSelected,
+            fontSize = 16.sp,
+            fontWeight = W500
+        )
+    }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    Messenger531Theme {
-        Greeting("Android")
+fun MenuApplication() {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 15.dp),
+            verticalAlignment = Alignment.CenterVertically
+
+        ) {
+            Text(
+                text = "Настройки",
+                color = txtMainWhite,
+                fontSize = 20.sp,
+                fontWeight = W700
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(2.dp, color = brGrey)
+                .background(
+                    color = bgGreyDark
+                )
+        ) {
+            ProfileRowSettings("Чаты", R.drawable.profile_message)
+            ProfileRowSettings("Уведомления", R.drawable.profile_notification)
+            ProfileRowSettings("Конфиденциальность", R.drawable.profile_confidance)
+            ProfileRowSettings("О приложении", R.drawable.profile_info)
+        }
+    }
+}
+
+@Composable
+fun ProfileRowSettings(text: String, idPainterResource: Int, paddingHorizontalRow: Dp = 25.dp) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = {},
+                indication = ripple(),
+                interactionSource = remember { MutableInteractionSource() }
+            )
+            .padding(horizontal = paddingHorizontalRow, vertical = 12.5.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(idPainterResource),
+            contentDescription = "",
+            modifier = Modifier
+                .size(35.dp)
+        )
+        Spacer(modifier = Modifier.size(10.dp))
+        Text(
+            text = text,
+            color = txtMainWhite,
+            fontSize = 18.sp,
+        )
+    }
+}
+
+@Composable
+fun NavBarApp() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .background(bgGreyDark)
+            .padding(horizontal = 10.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.33f)
+                .border(2.dp, brGrey)
+        ) {
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.5f)
+                .border(2.dp, brGrey)
+        ) {
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(1f)
+                .border(2.dp, brGrey)
+        ) {
+
+        }
+
+
     }
 }
