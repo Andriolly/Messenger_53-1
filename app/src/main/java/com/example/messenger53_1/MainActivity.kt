@@ -13,8 +13,9 @@ import com.example.messenger53_1.screen.MainScreen
 import com.example.messenger53_1.ui.theme.Messenger531Theme
 import com.example.messenger53_1.ui.theme.bgGrey
 import com.example.messenger53_1.ui.theme.bgGreyStatusBar
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

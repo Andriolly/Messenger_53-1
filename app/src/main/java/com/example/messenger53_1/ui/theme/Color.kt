@@ -1,5 +1,9 @@
 package com.example.messenger53_1.ui.theme
 
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
@@ -14,6 +18,14 @@ val Pink40 = Color(0xFF7D5260)
 val icMainGrey = Color(0xFFC7C7C7)
 
 val icMainSelected = Color(0xFFF56E0F)
+
+val btnMainOrange: ButtonColors
+    @Composable
+    get() = buttonColors(
+        containerColor = Color(0xFFF56E0F),
+        contentColor = Color.White,
+        disabledContainerColor = Color(0xFF434343),
+        disabledContentColor = Color(0xFFF9F9F9))
 
 val bgGrey = Color(0xFF434343)
 
