@@ -115,31 +115,9 @@ fun SignInScreen(navController: NavHostController) {
             password = true
         )
 
-//        OutlinedTextField(
-//            colors = OutlinedTextFieldDefaults.colors(
-//                focusedTextColor= txtMainSelected,
-//                focusedBorderColor = icMainSelected,
-//                unfocusedBorderColor = txtIcMainGrey,
-//                unfocusedTextColor = txtIcMainGrey
-//            ),
-//            modifier = Modifier
-//                .padding(top = 20.dp, bottom = 10.dp),
-//            label = {
-//                Text(text = "Электронная почта")
-//            },
-//            value = email,
-//            onValueChange = { email = it })
-//        OutlinedTextField(
-//            label = {
-//                Text(text = "Пароль")
-//            },
-//            value = password,
-//            visualTransformation = PasswordVisualTransformation(),
-//            onValueChange = { password = it }
-//        )
-
         if (uiState.value == SignInState.Loading) {
-            CircularProgressIndicator( modifier = Modifier
+            CircularProgressIndicator( color = txtIcMainSelected,
+                modifier = Modifier
                 .padding(top = 40.dp))
         } else {
             Button(

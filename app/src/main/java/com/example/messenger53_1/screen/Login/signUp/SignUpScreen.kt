@@ -1,10 +1,12 @@
 package com.example.messenger53_1.screen.Login.signUp
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -80,94 +82,67 @@ fun SignUpScreen(navController: NavHostController) {
             .background(bgGreyDark),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Image(
+        Spacer(
             modifier = Modifier
-                .padding(top = 150.dp, bottom = 30.dp)
-                .size(150.dp),
-            painter = painterResource(R.drawable.logo), contentDescription = null,
+                .padding(top = 150.dp)
         )
 
+
         Text(
+
             color = txtIcMainSelected,
-            text = "Добро пожаловать!",
+            text = "Давайте начнем!",
             fontWeight = W700,
             fontSize = 22.sp
         )
-
+        Spacer(
+            modifier = Modifier
+                .padding(top = 10.dp)
+        )
         Text(
             color = txtIcMainSelected,
-            text = "Войдите в свой аккаунт",
+            text = "Зарегистрируйте свой новый аккаунт",
             fontWeight = W700,
-            fontSize = 22.sp
+            fontSize = 20.sp
         )
 
-        //!!!! Надо доделать
         var isError by remember {
-            mutableStateOf(password.isNotEmpty() || password != confirmPassword)
+            mutableStateOf(false)
         }
+        isError = password != confirmPassword
 
-
+        Spacer(
+            modifier = Modifier
+                .padding(top = 100.dp)
+        )
 
         FirmOutlineTextField(
             label = "Имя пользователя",
-            value = { name = it }
+            value = { name = it },
+            paddingTop = 10.dp
         )
         FirmOutlineTextField(
             label = "Электронная почта",
-            value = { email = it }
+            value = { email = it },
+            paddingTop = 10.dp
         )
         FirmOutlineTextField(
             label = "Пароль",
             value = { password = it },
+            paddingTop = 10.dp,
             password = true
         )
         FirmOutlineTextField(
             label = "Подтвердите пароль",
             value = { confirmPassword = it },
+            paddingTop = 10.dp,
             password = true,
             error = isError
         )
 
-//        OutlinedTextField(
-//            modifier = Modifier
-//                .padding(top = 20.dp, bottom = 10.dp),
-//            label = {
-//                Text(text = "Имя пользователя")
-//            },
-//            value = name,
-//            onValueChange = { name = it })
-//
-//        OutlinedTextField(
-//            modifier = Modifier
-//                .padding(bottom = 10.dp),
-//            label = {
-//                Text(text = "Электронная почта")
-//            },
-//            value = email,
-//            onValueChange = { email = it })
-//
-//        OutlinedTextField(
-//            label = {
-//                Text(text = "Пароль")
-//            },
-//            value = password,
-//            visualTransformation = PasswordVisualTransformation(),
-//            onValueChange = { password = it },
-//        )
-//
-//        OutlinedTextField(
-//            label = {
-//                Text(text = "Подтвердите пароль")
-//            },
-//            value = confirmPassword,
-//            visualTransformation = PasswordVisualTransformation(),
-//            onValueChange = { confirmPassword = it },
-//            isError = password.isNotEmpty() && password != confirmPassword
-//        )
-
         if (uiState.value == SignUpState.Loading) {
             CircularProgressIndicator(
+                color = txtIcMainSelected,
                 modifier = Modifier
                     .padding(top = 40.dp)
             )

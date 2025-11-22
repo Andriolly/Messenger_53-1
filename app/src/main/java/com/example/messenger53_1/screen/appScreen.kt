@@ -68,7 +68,7 @@ fun AppScreen(navController: NavHostController,modifier: Modifier = Modifier) {
                             BadgedBox(
                                 badge =
                                     {
-                                        if (navItem.badgeCount != null)
+                                        if (navItem.badgeCount != 0)
                                             Badge {
                                                 Text(text = navItem.badgeCount.toString())
                                             }
