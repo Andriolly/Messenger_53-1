@@ -104,8 +104,9 @@ fun SignUpScreen(navController: NavHostController) {
 
         //!!!! Надо доделать
         var isError by remember {
-            mutableStateOf(password.isNotEmpty() && password == confirmPassword)
+            mutableStateOf(password.isNotEmpty() || password != confirmPassword)
         }
+
 
 
         FirmOutlineTextField(
@@ -118,11 +119,13 @@ fun SignUpScreen(navController: NavHostController) {
         )
         FirmOutlineTextField(
             label = "Пароль",
-            value = { password = it }
+            value = { password = it },
+            password = true
         )
         FirmOutlineTextField(
             label = "Подтвердите пароль",
             value = { confirmPassword = it },
+            password = true,
             error = isError
         )
 

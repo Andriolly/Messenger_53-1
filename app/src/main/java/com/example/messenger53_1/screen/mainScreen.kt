@@ -41,6 +41,9 @@ import com.example.messenger53_1.ui.theme.txtIcMainGrey
 import com.example.messenger53_1.ui.theme.txtIcMainSelected
 import com.google.firebase.auth.FirebaseAuth
 
+// ДОДЕЛАТЬ!!!
+// isError в signupscreen
+
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {

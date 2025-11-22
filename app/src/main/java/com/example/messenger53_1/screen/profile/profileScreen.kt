@@ -1,7 +1,5 @@
 package com.example.messenger53_1.screen.profile
 
-import android.widget.ImageButton
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,11 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,25 +32,19 @@ import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
 import com.example.messenger53_1.R
-import com.example.messenger53_1.screen.Login.signIn.SignInScreen
-import com.example.messenger53_1.screen.Login.signIn.SignInState
-import com.example.messenger53_1.screen.MainScreen
 import com.example.messenger53_1.ui.theme.bgGrey
 import com.example.messenger53_1.ui.theme.bgGreyDark
 import com.example.messenger53_1.ui.theme.brGreyDarkBorder
 import com.example.messenger53_1.ui.theme.txtMainSelected
 import com.example.messenger53_1.ui.theme.txtMainWhite
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 //Создание страницы "Профиль"
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
-
-//!!!! Доделать выход до конца
+fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostController) {
 
     Column(
         modifier= modifier
@@ -67,7 +55,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
         ) {
 
-        HeaderProfile()
+        HeaderProfile(navController)
 
         InfoProfile()
 
@@ -78,7 +66,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HeaderProfile() {
+fun HeaderProfile(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -138,7 +126,8 @@ fun HeaderProfile() {
                     .padding(10.dp)
                     .size(30.dp)
                     .clickable(
-                        onClick = { Firebase.auth.signOut()},
+                        onClick = { Firebase.auth.signOut()
+                            navController.navigate(route = "login")},
                         indication = ripple(),
                         interactionSource = remember { MutableInteractionSource() }
                     )

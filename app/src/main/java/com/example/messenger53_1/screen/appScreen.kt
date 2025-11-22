@@ -26,21 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.messenger53_1.bottomNavigation.BottomItem
 import com.example.messenger53_1.screen.chat.ChatScreen
 import com.example.messenger53_1.screen.contacts.ContactsScreen
 import com.example.messenger53_1.screen.profile.ProfileScreen
-import com.example.messenger53_1.screen.Login.signIn.SignInScreen
-import com.example.messenger53_1.screen.Login.signUp.SignUpScreen
 import com.example.messenger53_1.ui.theme.bgGreyDark
 import com.example.messenger53_1.ui.theme.icMainGrey
 import com.example.messenger53_1.ui.theme.icMainSelected
 import com.example.messenger53_1.ui.theme.txtIcMainGrey
 import com.example.messenger53_1.ui.theme.txtIcMainSelected
-import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -116,14 +110,18 @@ fun AppScreen(navController: NavHostController,modifier: Modifier = Modifier) {
         content = { innerPadding: PaddingValues -> //системный отступ для верхнего бара
 
             ContentScreen(modifier = Modifier
-                .padding(innerPadding), selectedIndexed)
+                .padding(innerPadding), selectedIndexed, navController)
 
         }
     )
 }
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndexed: Int) {
+fun ContentScreen(
+    modifier: Modifier = Modifier,
+    selectedIndexed: Int,
+    navController: NavHostController
+) {
 
     Box(
         modifier = Modifier
@@ -132,7 +130,7 @@ fun ContentScreen(modifier: Modifier = Modifier, selectedIndexed: Int) {
         when (selectedIndexed) {
             0 -> ContactsScreen(modifier = modifier)
             1 -> ChatScreen(modifier = modifier)
-            2 -> ProfileScreen(modifier = modifier)
+            2 -> ProfileScreen(modifier = modifier, navController)
         }
     }
 

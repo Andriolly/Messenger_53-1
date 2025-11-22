@@ -53,7 +53,7 @@ fun FirmOutlineTextField(
     if (password) {
         OutlinedTextField(
             colors = OutlinedTextFieldDefaults.colors(
-                errorBorderColor = Color.Red,
+                errorTextColor = Color.Red,
                 focusedTextColor = txtMainWhite,
                 focusedBorderColor = icMainSelected,
                 unfocusedBorderColor = txtIcMainGrey,
