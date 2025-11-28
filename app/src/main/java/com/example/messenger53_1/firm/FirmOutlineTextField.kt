@@ -1,6 +1,10 @@
 package com.example.messenger53_1.firm
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -45,6 +49,12 @@ fun FirmOutlineTextField(
      * Ошибка или нет
      * */
     error: Boolean = false,
+    /**
+     * Поиск или нет
+     * */
+    search: Boolean = false,
+
+
 ) {
 
     var text by remember { mutableStateOf("") }
@@ -73,9 +83,45 @@ fun FirmOutlineTextField(
                 value(it)
             },
             visualTransformation = PasswordVisualTransformation(),
+            singleLine = true,
             isError = error
             )
-    } else {
+    }
+    else if (search){
+        OutlinedTextField(
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = txtMainWhite,
+                focusedBorderColor = icMainSelected,
+                unfocusedBorderColor = txtIcMainGrey,
+                unfocusedTextColor = txtIcMainGrey
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = paddingTop, bottom = paddingBottom)
+                .padding(horizontal = 16.dp),
+            label = {
+                Text(
+                    color = txtMainWhite,
+                    text = label
+                )
+            },
+            value = text,
+            onValueChange = {
+                text = it
+                value(it)
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = null,
+                    tint = txtMainWhite
+                )
+            },
+            singleLine = true
+
+        )
+    }
+    else {
         OutlinedTextField(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = txtMainWhite,
@@ -96,6 +142,7 @@ fun FirmOutlineTextField(
                 text = it
                 value(it)
             },
+            singleLine = true
         )
     }
 

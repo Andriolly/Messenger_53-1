@@ -25,15 +25,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.messenger53_1.bottomNavigation.BottomItem
 import com.example.messenger53_1.screen.chat.ChatScreen
 import com.example.messenger53_1.screen.contacts.ContactsScreen
 import com.example.messenger53_1.screen.profile.ProfileScreen
 import com.example.messenger53_1.screen.Login.signIn.SignInScreen
 import com.example.messenger53_1.screen.Login.signUp.SignUpScreen
+import com.example.messenger53_1.screen.chat.Message.MessageScreen
 import com.example.messenger53_1.ui.theme.bgGreyDark
 import com.example.messenger53_1.ui.theme.icMainGrey
 import com.example.messenger53_1.ui.theme.icMainSelected
@@ -60,6 +63,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
         }
         composable(route = "app") {
             AppScreen(navController)
+        }
+        composable(route = "chat/{channelId}", arguments = listOf(
+            navArgument("channelId"){
+                type = NavType.StringType
+            }
+        )) {
+            val channelId = it.arguments?.getString("channelId") ?: ""
+            MessageScreen(navController,channelId)
         }
     }
 }

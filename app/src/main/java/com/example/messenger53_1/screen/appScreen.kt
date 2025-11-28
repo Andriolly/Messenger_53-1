@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
@@ -41,8 +44,8 @@ import com.example.messenger53_1.ui.theme.txtIcMainSelected
 fun AppScreen(navController: NavHostController,modifier: Modifier = Modifier) {
     val navItems = listOf(
         BottomItem(title = "Контакты", iconId = Icons.Default.AccountCircle),
-        BottomItem(title = "Чаты", iconId = Icons.Default.Home, badgeCount = 5),
-        BottomItem(title = "Профиль", iconId = Icons.Default.Info)
+        BottomItem(title = "Чаты", iconId = Icons.AutoMirrored.Filled.Chat, badgeCount = 5),
+        BottomItem(title = "Профиль", iconId = Icons.Filled.ManageAccounts)
     )
 
     var selectedIndexed by remember {
@@ -51,6 +54,7 @@ fun AppScreen(navController: NavHostController,modifier: Modifier = Modifier) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = bgGreyDark,
         bottomBar = {
             NavigationBar(
                 containerColor = bgGreyDark,
@@ -124,12 +128,12 @@ fun ContentScreen(
 ) {
 
     Box(
-        modifier = Modifier
-            .background(bgGreyDark)
+//        modifier = Modifier
+//            .background(bgGreyDark)
     ){
         when (selectedIndexed) {
-            0 -> ContactsScreen(modifier = modifier)
-            1 -> ChatScreen(modifier = modifier)
+            0 -> ContactsScreen(modifier = modifier, navController)
+            1 -> ChatScreen(modifier = modifier, navController)
             2 -> ProfileScreen(modifier = modifier, navController)
         }
     }

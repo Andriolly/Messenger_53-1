@@ -29,11 +29,17 @@ val btnMainOrange: ButtonColors
 
 val bgGrey = Color(0xFF434343)
 
+val bgItemCurUser = Color(0xFF919191)
+
+val bgItemSendUser = Color(0xFF797878)
+
 val bgGreyStatusBar = 0xFF6650a4.toInt()
 
 val bgGreyDark = Color(0xFF373737)
 
 val brGreyDarkBorder = Color(0xFF1E1E1E)
+
+val brGreyLightBorder = Color(0xFF616060)
 
 val txtIcMainGrey = Color(0xFFC7C7C7)
 
