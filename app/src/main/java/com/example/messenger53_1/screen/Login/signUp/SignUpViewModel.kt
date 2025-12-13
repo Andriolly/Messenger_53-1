@@ -1,7 +1,14 @@
 package com.example.messenger53_1.screen.Login.signUp
 
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import com.example.messenger53_1.DataMessanger.NODE_USERS
+import com.example.messenger53_1.MainActivity
+import com.example.messenger53_1.model.UserData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +34,9 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
                         )?.addOnCompleteListener {
                             _state.value = SignUpState.Success
                         }
+//                      Создание пользователя в базе данных
+                        createUserProfile(name = name, email = email, password = password)
+
                         _state.value = SignUpState.Success
                         return@addOnCompleteListener
                     }
@@ -36,6 +46,34 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
                     _state.value = SignUpState.Error
                 }
             }
+
+
+
+
+    }
+
+    fun createUserProfile(name: String, email: String, password: String) {
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val ref = FirebaseDatabase.getInstance().getReference(NODE_USERS).child(uid)
+
+        Log.d("signUP",uid)
+
+        val user = UserData(
+            uid = uid,
+            name = name,
+            email = email,
+            password = password
+        )
+
+        ref.setValue(user)
+            .addOnSuccessListener {
+                Log.d("signUP","Пользователь сохранен")
+            }
+            .addOnFailureListener {
+                Log.d("signUP","Пользователь не сохранен")
+                _state.value = SignUpState.Error
+            }
+
     }
 
 }

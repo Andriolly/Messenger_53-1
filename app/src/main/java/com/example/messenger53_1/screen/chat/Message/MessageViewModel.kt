@@ -28,9 +28,6 @@ class MessageViewModel @Inject constructor() : ViewModel() {
     private val db = Firebase.database
 
 
-
-
-
     fun sendMessage(channelID: String, messageText: String) {
         val message = Message(
             id = db.reference.push().key ?: UUID.randomUUID().toString(),
@@ -49,6 +46,7 @@ class MessageViewModel @Inject constructor() : ViewModel() {
 
         db.getReference(NODE_MESSAGES).child(channelID).orderByChild(CHILD_CREATED_AT)
             .addValueEventListener(object : ValueEventListener {
+
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Message>()
                     snapshot.children.forEach { data ->

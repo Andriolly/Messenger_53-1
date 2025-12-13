@@ -42,6 +42,7 @@ import com.example.messenger53_1.ui.theme.txtIcMainSelected
 
 @Composable
 fun AppScreen(navController: NavHostController,modifier: Modifier = Modifier) {
+
     val navItems = listOf(
         BottomItem(title = "Контакты", iconId = Icons.Default.AccountCircle),
         BottomItem(title = "Чаты", iconId = Icons.AutoMirrored.Filled.Chat, badgeCount = 5),
@@ -59,7 +60,6 @@ fun AppScreen(navController: NavHostController,modifier: Modifier = Modifier) {
             NavigationBar(
                 containerColor = bgGreyDark,
                 tonalElevation = 0.dp,
-
                 ) {
                 navItems.forEachIndexed { index, navItem ->
                     NavigationBarItem(
@@ -127,10 +127,7 @@ fun ContentScreen(
     navController: NavHostController
 ) {
 
-    Box(
-//        modifier = Modifier
-//            .background(bgGreyDark)
-    ){
+    Box{
         when (selectedIndexed) {
             0 -> ContactsScreen(modifier = modifier, navController)
             1 -> ChatScreen(modifier = modifier, navController)

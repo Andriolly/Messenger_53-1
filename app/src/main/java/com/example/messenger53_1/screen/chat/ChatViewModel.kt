@@ -1,9 +1,11 @@
 package com.example.messenger53_1.screen.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.messenger53_1.DataMessanger.NODE_CHANNELS
 import com.example.messenger53_1.model.Channel
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.database
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,8 +34,6 @@ class ChatViewModel @Inject constructor(): ViewModel() {
             }
             _channels.value = list
         }
-
-
     }
 
     fun addChannel(name: String){

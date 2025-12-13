@@ -17,9 +17,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,25 +41,50 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.messenger53_1.R
+import com.example.messenger53_1.model.PhoneNumberVisualTransformation
+import com.example.messenger53_1.model.UserData
 import com.example.messenger53_1.ui.theme.bgGrey
 import com.example.messenger53_1.ui.theme.bgGreyDark
 import com.example.messenger53_1.ui.theme.brGreyDarkBorder
+import com.example.messenger53_1.ui.theme.brGreyLightBorder
+import com.example.messenger53_1.ui.theme.btnMainOrange
+import com.example.messenger53_1.ui.theme.txtIcMainGrey
+import com.example.messenger53_1.ui.theme.txtIcMainSelected
 import com.example.messenger53_1.ui.theme.txtMainSelected
 import com.example.messenger53_1.ui.theme.txtMainWhite
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
+
 //Создание страницы "Профиль"
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostController) {
 
+    val viewModel: ProfileScreenViewModel = hiltViewModel()
+    val userData = viewModel.userData.collectAsState()
+
+    val isChangePhone = remember {
+        mutableStateOf(false)
+    }
+    val isChangeUsername = remember {
+        mutableStateOf(false)
+    }
+    val sheetState = rememberModalBottomSheetState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.initProfile()
+    }
+
     Column(
-        modifier= modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
                 color = bgGrey
@@ -55,18 +92,54 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
 
         ) {
 
-        HeaderProfile(navController)
+        HeaderProfile(navController, userData)
 
-        InfoProfile()
-
+        InfoProfile(
+            userData,
+            onPhoneClick = {
+                isChangePhone.value = true
+            },  // При клике на телефон — открываем диалог изменения телефона
+            onUsernameClick = {
+                isChangeUsername.value = true
+            }  // При клике на имя пользователя — открываем диалог изменения имени)
+        )
         MenuApplication()
 
     }
 
+    if (isChangePhone.value) {
+        ModalBottomSheet(
+            containerColor = bgGreyDark,
+            modifier = Modifier
+                .background(txtMainWhite),
+            onDismissRequest = { isChangePhone.value = false },
+            sheetState = sheetState
+        ) {
+            ChangePhoneDialog {
+                viewModel.changePhone(it)
+                isChangePhone.value = false
+            }
+        }
+    }
+
+    if (isChangeUsername.value) {
+        ModalBottomSheet(
+            containerColor = bgGreyDark,
+            modifier = Modifier
+                .background(txtMainWhite),
+            onDismissRequest = { isChangeUsername.value = false },
+            sheetState = sheetState
+        ) {
+            ChangeUsernameDialog {
+                viewModel.changeUsername(it)
+                isChangeUsername.value = false
+            }
+        }
+    }
 }
 
 @Composable
-fun HeaderProfile(navController: NavHostController) {
+fun HeaderProfile(navController: NavHostController, userData: State<UserData>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,7 +179,7 @@ fun HeaderProfile(navController: NavHostController) {
                     modifier = Modifier.size(15.dp)
                 )
                 Text(
-                    text = "Котов Кот Котович",
+                    text = userData.value.name,
                     color = txtMainWhite,
                     fontSize = 20.sp
                 )
@@ -126,14 +199,15 @@ fun HeaderProfile(navController: NavHostController) {
                     .padding(10.dp)
                     .size(30.dp)
                     .clickable(
-                        onClick = { Firebase.auth.signOut()
-                            navController.navigate(route = "login")},
+                        onClick = {
+                            Firebase.auth.signOut()
+                            navController.navigate(route = "login")
+                        },
                         indication = ripple(),
                         interactionSource = remember { MutableInteractionSource() }
-                    )
-                    ,
+                    ),
 
-            )
+                )
         }
 
 
@@ -142,7 +216,11 @@ fun HeaderProfile(navController: NavHostController) {
 }
 
 @Composable
-fun InfoProfile() {
+fun InfoProfile(
+    userData: State<UserData>,
+    onPhoneClick: () -> Unit,
+    onUsernameClick: () -> Unit,
+) {
     Column {
         Row(
             modifier = Modifier
@@ -173,6 +251,8 @@ fun InfoProfile() {
 
         }
 
+        val tdxDataPhone = if(userData.value.phone == "Введите телефон") "Введите телефон" else "+7 ${userData.value.phone}"
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -182,14 +262,26 @@ fun InfoProfile() {
                 )
                 .padding(vertical = 10.dp)
         ) {
-            ProfileRowAccounts(txtHeader = "Номер телефона", txtData = "+7(999)999-99-99")
-            ProfileRowAccounts(txtHeader = "Имя пользователя", txtData = "@Koterinio")
+            ProfileRowAccounts(
+                txtHeader = "Номер телефона",
+                txtData = tdxDataPhone,
+                onClick = onPhoneClick
+            )
+            ProfileRowAccounts(
+                txtHeader = "Имя пользователя",
+                txtData = userData.value.userName,
+                onClick = onUsernameClick
+            )
         }
     }
 }
 
 @Composable
-fun ProfileRowAccounts(txtHeader: String, txtData: String) {
+fun ProfileRowAccounts(
+    txtHeader: String,
+    txtData: String,
+    onClick: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -197,17 +289,23 @@ fun ProfileRowAccounts(txtHeader: String, txtData: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         Text(
             text = txtHeader,
             color = txtMainWhite,
             fontSize = 16.sp,
         )
-        Text(
-            text = txtData,
-            color = txtMainSelected,
-            fontSize = 16.sp,
-            fontWeight = W500
-        )
+
+        TextButton(
+            onClick = onClick
+        ) {
+            Text(
+                text = txtData,
+                color = txtMainSelected,
+                fontSize = 16.sp,
+                fontWeight = W500,
+            )
+        }
     }
 }
 
@@ -270,5 +368,143 @@ fun ProfileRowSettings(text: String, idPainterResource: Int, paddingHorizontalRo
             color = txtMainWhite,
             fontSize = 18.sp,
         )
+    }
+}
+
+
+@Composable
+fun ChangePhoneDialog(onAddChannel: (String) -> Unit) {
+    val phoneNumber = remember {
+        mutableStateOf("")
+    }
+    Column(
+
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = "Изменить телефон",
+            color = txtIcMainGrey,
+            fontSize = 25.sp
+        )
+        Spacer(
+            modifier = Modifier.padding(8.dp)
+        )
+        TextField(
+            colors = TextFieldDefaults.colors(
+                unfocusedTextColor = txtIcMainGrey,
+                unfocusedContainerColor = brGreyLightBorder,
+                focusedTextColor = txtMainWhite,
+                focusedContainerColor = brGreyLightBorder,
+                focusedLabelColor = txtIcMainSelected,
+                unfocusedLabelColor = txtIcMainSelected,
+                cursorColor = txtIcMainSelected,
+                focusedIndicatorColor = txtIcMainSelected,
+
+                ),
+            value = phoneNumber.value,
+            onValueChange = {
+//                phoneNumber.value = it.filter { char -> char.isDigit() }.take(10)
+                phoneNumber.value = it
+                    .filter { it.isDigit() }
+                    .take(10)
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+//            visualTransformation = PhoneNumberVisualTransformation(),
+            placeholder = { Text("Введите номер без +7") },
+            label = {
+                Text(
+                    text = "Телефон"
+                )
+            },
+            singleLine = true,
+        )
+
+        Spacer(
+            modifier = Modifier.padding(8.dp)
+        )
+
+        Button(
+            onClick = {
+                onAddChannel(phoneNumber.value)
+            },
+            modifier = Modifier
+                .padding(horizontal = 40.dp, vertical = 5.dp),
+            colors = btnMainOrange,
+            enabled = phoneNumber.value.length == 10
+
+        ) {
+            Text(text = "Изменить")
+        }
+
+    }
+}
+
+
+@Composable
+fun ChangeUsernameDialog(onAddChannel: (String) -> Unit) {
+    val userName = remember {
+        mutableStateOf("")
+    }
+    Column(
+
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = "Изменить имя пользователя",
+            color = txtIcMainGrey,
+            fontSize = 25.sp
+        )
+        Spacer(
+            modifier = Modifier.padding(8.dp)
+        )
+        TextField(
+            colors = TextFieldDefaults.colors(
+                unfocusedTextColor = txtIcMainGrey,
+                unfocusedContainerColor = brGreyLightBorder,
+                focusedTextColor = txtMainWhite,
+                focusedContainerColor = brGreyLightBorder,
+                focusedLabelColor = txtIcMainSelected,
+                unfocusedLabelColor = txtIcMainSelected,
+                cursorColor = txtIcMainSelected,
+                focusedIndicatorColor = txtIcMainSelected,
+
+                ),
+            value = userName.value,
+            onValueChange = {
+                userName.value = it
+                    .take(25)
+            },
+            label = {
+                Text(
+                    text = "Имя пользователя"
+                )
+            },
+            singleLine = true,
+        )
+
+        Spacer(
+            modifier = Modifier.padding(8.dp)
+        )
+
+        Button(
+            onClick = {
+                onAddChannel(userName.value)
+            },
+            modifier = Modifier
+                .padding(horizontal = 40.dp, vertical = 5.dp),
+            colors = btnMainOrange,
+            enabled = userName.value.length >= 3
+        ) {
+            Text(text = "Изменить")
+        }
+
     }
 }
