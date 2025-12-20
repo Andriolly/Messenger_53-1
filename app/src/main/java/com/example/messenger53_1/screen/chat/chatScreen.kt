@@ -24,6 +24,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -36,34 +37,40 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.messenger53_1.DataMessanger
 import com.example.messenger53_1.DataMessanger.chatName
 import com.example.messenger53_1.firm.FirmOutlineTextField
 import com.example.messenger53_1.model.Channel
+import com.example.messenger53_1.model.indivMessage
 import com.example.messenger53_1.ui.theme.bgGrey
 import com.example.messenger53_1.ui.theme.bgGreyDark
+import com.example.messenger53_1.ui.theme.bgItemCurUser
 import com.example.messenger53_1.ui.theme.brGreyLightBorder
 import com.example.messenger53_1.ui.theme.btnMainOrange
+import com.example.messenger53_1.ui.theme.txtGreyDark
 import com.example.messenger53_1.ui.theme.txtIcMainGrey
 import com.example.messenger53_1.ui.theme.txtIcMainSelected
+import com.example.messenger53_1.ui.theme.txtMainSelected
 import com.example.messenger53_1.ui.theme.txtMainWhite
-import java.text.SimpleDateFormat
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(modifier: Modifier = Modifier, navController: NavHostController) {
     val viewModel = hiltViewModel<ChatViewModel>()
     val channels = viewModel.channels.collectAsState()
+    val individualMessages = viewModel.individualMessages.collectAsState()
     val addChannel = remember {
         mutableStateOf(false)
     }
     val sheetState = rememberModalBottomSheetState()
+
+    val isActiveChannel = remember {
+        mutableStateOf(true)
+    }
 
 
     Box(
@@ -83,36 +90,94 @@ fun ChatScreen(modifier: Modifier = Modifier, navController: NavHostController) 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(30.dp)
+//                        .height(30.dp)
                         .background(bgGreyDark)
-                        .padding(top = 5.dp),
+                        .padding(top = 10.dp, bottom = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "ЧАТЫ",
-                        fontSize = 25.sp,
-                        color = txtMainWhite
+                        fontSize = 35.sp,
+                        color = txtMainWhite,
+                        fontWeight = W700
                     )
 
                 }
             }
+//            item {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+////                        .height(50.dp)
+//                        .background(bgGreyDark)
+//                        .padding(bottom = 16.dp),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    var index by remember {
+//                        mutableStateOf("")
+//                    }
+//                    FirmOutlineTextField(
+//                        label = "Поиск",
+//                        value = { index = it },
+//                        search = true
+//                    )
+//                }
+//            }
             item {
-                Box(
+                HorizontalDivider(
+                    color = brGreyLightBorder,
                     modifier = Modifier
                         .fillMaxWidth()
-//                        .height(50.dp)
-                        .background(bgGreyDark)
-                        .padding(bottom = 16.dp),
-                    contentAlignment = Alignment.Center
+                        .height(2.dp)
+                )
+            }
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    var index by remember {
-                        mutableStateOf("")
+
+                    val colorSelected = txtMainSelected
+                    val colorUnSelected = bgItemCurUser
+
+
+                    if (isActiveChannel.value == true) {
+                        TextButton(onClick = { isActiveChannel.value = true }) {
+                            Text(
+                                fontWeight = W700,
+                                color = colorSelected,
+                                text = "Каналы",
+                                fontSize = 25.sp
+                            )
+                        }
+                        TextButton(onClick = { isActiveChannel.value = false }) {
+                            Text(
+                                fontWeight = W700,
+                                color = colorUnSelected,
+                                text = "Личные",
+                                fontSize = 25.sp
+                            )
+                        }
+                    } else {
+                        TextButton(onClick = { isActiveChannel.value = true }) {
+                            Text(
+                                fontWeight = W700,
+                                color = colorUnSelected,
+                                text = "Каналы",
+                                fontSize = 25.sp
+                            )
+                        }
+                        TextButton(onClick = { isActiveChannel.value = false }) {
+                            Text(
+                                fontWeight = W700,
+                                color = colorSelected,
+                                text = "Личные",
+                                fontSize = 25.sp
+                            )
+                        }
                     }
-                    FirmOutlineTextField(
-                        label = "Поиск",
-                        value = { index = it },
-                        search = true
-                    )
+
                 }
             }
             item {
@@ -123,37 +188,52 @@ fun ChatScreen(modifier: Modifier = Modifier, navController: NavHostController) 
                         .height(2.dp)
                 )
             }
-            items(channels.value) { channel ->
-                Column {
-                    ItemChat(channel, onClick = {
-                        navController.navigate(
-                            "chat/${channel.id}"
-
-                        )
-                        chatName = channel.name
-                    })
+            if (isActiveChannel.value) {
+                items(channels.value) { channel ->
+                    Column {
+                        ItemChatChannel(channel, onClick = {
+                            navController.navigate(
+                                "chat/${channel.id}"
+                            )
+                            chatName = channel.name
+                        })
+                    }
+                }
+            } else {
+                items(individualMessages.value) { inMessage ->
+                    Column {
+                        ItemChatIndMassage(inMessage, onClick = {
+                            navController.navigate(
+                                "chat/${inMessage.id}"
+                            )
+                            chatName = inMessage.name
+                        })
+                    }
                 }
             }
 
+
         }
-        FloatingActionButton(
-            contentColor = txtMainWhite,
-            containerColor = txtIcMainSelected,
-            shape = CircleShape,
-            modifier = modifier
-                .align(
-                    alignment = Alignment.BottomEnd
+        if (isActiveChannel.value) {
+            FloatingActionButton(
+                contentColor = txtMainWhite,
+                containerColor = txtIcMainSelected,
+                shape = CircleShape,
+                modifier = modifier
+                    .align(
+                        alignment = Alignment.BottomEnd
+                    )
+                    .padding(16.dp)
+                    .size(50.dp),
+                onClick = {
+                    addChannel.value = true
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Create,
+                    contentDescription = ""
                 )
-                .padding(16.dp)
-                .size(50.dp),
-            onClick = {
-                addChannel.value = true
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Default.Create,
-                contentDescription = ""
-            )
+            }
         }
     }
 
@@ -174,8 +254,65 @@ fun ChatScreen(modifier: Modifier = Modifier, navController: NavHostController) 
 
 }
 
+
 @Composable
-fun ItemChat(channel: Channel, onClick: () -> Unit) {
+fun ItemChatIndMassage(indivMessage: indivMessage, onClick: () -> Unit) {
+
+//    val date = Date(channel.createdAT)
+//    val sdf = SimpleDateFormat("dd/MM/yy HH:mm ")
+//    val formattedDate = sdf.format(date)
+
+    Row(
+        modifier = Modifier
+            .background(bgGreyDark)
+            .fillMaxWidth()
+            .height(75.dp)
+            .padding(horizontal = 8.dp)
+            .clickable {
+                onClick()
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(50.dp)
+                .background(txtIcMainSelected)
+                .padding(horizontal = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = indivMessage.name[0].uppercase(),
+                color = txtMainWhite,
+                fontSize = 30.sp,
+            )
+        }
+        Column(
+            modifier = Modifier
+                .padding(start = 16.dp)
+        ) {
+            Text(
+                text = indivMessage.name,
+                fontSize = 20.sp,
+                color = txtMainWhite
+            )
+//            Text(
+//                text = formattedDate,
+//                fontSize = 16.sp,
+//                color = txtMainWhite
+//            )
+        }
+    }
+    HorizontalDivider(
+        color = brGreyLightBorder,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(2.dp)
+    )
+}
+
+@Composable
+fun ItemChatChannel(channel: Channel, onClick: () -> Unit) {
 
 //    val date = Date(channel.createdAT)
 //    val sdf = SimpleDateFormat("dd/MM/yy HH:mm ")

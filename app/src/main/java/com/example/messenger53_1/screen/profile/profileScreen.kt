@@ -335,9 +335,9 @@ fun MenuApplication() {
                     color = bgGreyDark
                 )
         ) {
-            ProfileRowSettings("Чаты", R.drawable.profile_message)
-            ProfileRowSettings("Уведомления", R.drawable.profile_notification)
-            ProfileRowSettings("Конфиденциальность", R.drawable.profile_confidance)
+//            ProfileRowSettings("Чаты", R.drawable.profile_message)
+//            ProfileRowSettings("Уведомления", R.drawable.profile_notification)
+//            ProfileRowSettings("Конфиденциальность", R.drawable.profile_confidance)
             ProfileRowSettings("О приложении", R.drawable.profile_info)
         }
     }

@@ -1,5 +1,6 @@
 package com.example.messenger53_1.screen.profile
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.messenger53_1.DataMessanger.CHILD_CREATED_AT
@@ -19,6 +20,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import androidx.core.net.toUri
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 class ProfileScreenViewModel @Inject constructor() : ViewModel() {
 

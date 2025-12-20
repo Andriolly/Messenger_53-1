@@ -21,6 +21,7 @@ import javax.inject.Inject
 
 class ContactsScreenViewModel @Inject constructor() : ViewModel() {
     private val firebaseDatabase = Firebase.database
+    private val firebaseAuth = FirebaseAuth.getInstance()
     private val _users = MutableStateFlow<List<UserData>>(emptyList())
     val users = _users.asStateFlow()
 
@@ -35,9 +36,10 @@ class ContactsScreenViewModel @Inject constructor() : ViewModel() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<UserData>()
                     snapshot.children.forEach { data ->
-                        val message = data.getValue(UserData::class.java)
-                        message?.let {
-                            list.add(it)
+                        val userId = data.key ?: ""
+                        val user = data.getValue(UserData::class.java)
+                        user?.let {
+                            list.add(it.copy(uid = userId))
                         }
                     }
                     _users.value = list
@@ -47,6 +49,16 @@ class ContactsScreenViewModel @Inject constructor() : ViewModel() {
 
                 }
             })
+    }
+
+    // Функция для получения ID индивидуального чата
+    fun getIndividualChatId(otherUserId: String): String {
+        val currentUserId = firebaseAuth.currentUser?.uid ?: return ""
+        return if (currentUserId < otherUserId) {
+            "${currentUserId}_${otherUserId}"
+        } else {
+            "${otherUserId}_${currentUserId}"
+        }
     }
 
 

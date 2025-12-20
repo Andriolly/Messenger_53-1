@@ -18,25 +18,18 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.messenger53_1.DataMessanger.chatName
 import com.example.messenger53_1.R
-import com.example.messenger53_1.firm.FirmOutlineTextField
-import com.example.messenger53_1.model.Channel
 import com.example.messenger53_1.model.UserData
 import com.example.messenger53_1.screen.chat.ChatViewModel
-import com.example.messenger53_1.screen.chat.ItemChat
 import com.example.messenger53_1.ui.theme.bgGrey
 import com.example.messenger53_1.ui.theme.bgGreyDark
 import com.example.messenger53_1.ui.theme.brGreyLightBorder
@@ -47,6 +40,7 @@ import com.example.messenger53_1.ui.theme.txtMainWhite
 fun ContactsScreen(modifier: Modifier = Modifier, navController: NavHostController) {
 
     val viewModel = hiltViewModel<ContactsScreenViewModel>()
+    val chatViewModel = hiltViewModel<ChatViewModel>() // Получаем ChatViewModel
     val users = viewModel.users.collectAsState()
 
     Box(
@@ -63,6 +57,24 @@ fun ContactsScreen(modifier: Modifier = Modifier, navController: NavHostControll
 
             ) {
             item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+//                        .height(30.dp)
+                        .background(bgGreyDark)
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Контакты",
+                        fontSize = 35.sp,
+                        color = txtMainWhite,
+                        fontWeight = W700
+                    )
+
+                }
+            }
+            item {
                 HorizontalDivider(
                     color = brGreyLightBorder,
                     modifier = Modifier
@@ -73,6 +85,16 @@ fun ContactsScreen(modifier: Modifier = Modifier, navController: NavHostControll
             items(users.value) { users ->
                 Column {
                     ItemUser(users, onClick = {
+
+                        // Создаем или получаем индивидуальный чат
+                        chatViewModel.getOrCreateIndividualChat(users.uid, users.name)
+
+                        // Получаем ID чата
+                        val chatId = viewModel.getIndividualChatId(users.uid)
+
+                        // Переходим на экран сообщений
+                        navController.navigate("chat/$chatId")
+//                        navController.navigate("chat/${users.uid}")
                     })
                 }
             }

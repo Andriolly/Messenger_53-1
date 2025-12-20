@@ -48,3 +48,7 @@ val txtIcMainSelected = Color(0xFFF56E0F)
 val txtMainWhite= Color(0xFFF9F9F9)
 
 val txtMainSelected = Color(0xFFF56E0F)
+
+val txtGreyLightBorder = Color(0xFF616060)
+
+val txtGreyDark = Color(0xFF373737)
